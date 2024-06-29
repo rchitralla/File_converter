@@ -1,14 +1,8 @@
 import streamlit as st
-from moviepy.editor import AudioFileClip
-
-def convert_audio_to_mp3(audio_file, output_file, progress_bar):
-    audio_clip = AudioFileClip(audio_file)
-    total_frames = int(audio_clip.fps * audio_clip.duration)
-    audio_clip.write_audiofile(output_file, progress_bar=progress_bar)
-    audio_clip.close()
+import requests
 
 def main():
-    st.title("Audio File to MP3 Converter")
+    st.title("Audio File to MP3 Converter with WebSocket Integration")
     st.write("Upload an audio file and convert it to MP3.")
 
     uploaded_file = st.file_uploader("Choose an audio file", type=["mp3", "wav", "ogg", "flac", "aac", "m4a", "wma", "amr", "mka"])
@@ -22,17 +16,31 @@ def main():
         
         # Button to start conversion
         if st.button("Convert to MP3"):
-            # Progress bar initialization
+            # Send file to WebSocket server for conversion
+            websocket_url = "ws://localhost:8888/convert"  # Replace with your WebSocket server URL
+            ws = websocket.WebSocket()
+            ws.connect(websocket_url)
+            
+            # Start sending file content
+            with uploaded_file as f:
+                file_content = f.read()
+                ws.send(file_content)
+            
+            # Monitor conversion progress
+            progress_text = st.empty()
             progress_bar = st.progress(0)
-            
-            # Convert and save to MP3
-            output_file = f"converted_{uploaded_file.name.split('.')[0]}.mp3"
-            st.write(f"Converting to MP3: {output_file}")
-            convert_audio_to_mp3(uploaded_file, output_file, progress_bar)
-            
-            # Display success message with download link
-            st.success(f"File converted successfully! [Download MP3 file]({output_file})")
-    
+
+            while True:
+                result = ws.recv()
+                if result.startswith("PROGRESS"):
+                    progress = float(result.split(":")[1])
+                    progress_bar.progress(progress)
+                    progress_text.text(f"Conversion progress: {progress}%")
+                elif result == "DONE":
+                    ws.close()
+                    st.success("File converted successfully!")
+                    break
+
     else:
         st.write("No file uploaded yet.")
 
