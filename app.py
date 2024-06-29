@@ -2,24 +2,13 @@ import streamlit as st
 from moviepy.editor import AudioFileClip
 
 def convert_audio_to_mp3(audio_file, output_file):
-    # Load the audio file clip
     audio_clip = AudioFileClip(audio_file)
-    
-    # Calculate the total number of frames for the progress bar
     total_frames = int(audio_clip.fps * audio_clip.duration)
-    
-    # Initialize a progress bar with the total number of frames
     progress_bar = st.progress(0)
-    
-    # Write the audio clip to an MP3 file
     audio_clip.write_audiofile(output_file, progress_bar=progress_bar)
-    
-    # Close the audio clip
     audio_clip.close()
 
 def main():
-    st.write("Starting the app...")
-
     st.title("Audio File to MP3 Converter")
     st.write("Upload an audio file and convert it to MP3.")
 
@@ -41,8 +30,6 @@ def main():
         st.success(f"File converted successfully! [Download MP3 file]({output_file})")
     else:
         st.write("No file uploaded yet.")
-
-    st.write("App finished.")
 
 if __name__ == "__main__":
     main()
