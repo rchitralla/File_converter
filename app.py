@@ -5,8 +5,14 @@ def convert_audio_to_mp3(audio_file, output_file):
     # Load the audio file clip
     audio_clip = AudioFileClip(audio_file)
     
+    # Calculate the total number of frames for the progress bar
+    total_frames = int(audio_clip.fps * audio_clip.duration)
+    
+    # Initialize a progress bar with the total number of frames
+    progress_bar = st.progress(0)
+    
     # Write the audio clip to an MP3 file
-    audio_clip.write_audiofile(output_file)
+    audio_clip.write_audiofile(output_file, progress_bar=progress_bar)
     
     # Close the audio clip
     audio_clip.close()
@@ -26,7 +32,8 @@ def main():
         output_file = f"converted_{uploaded_file.name.split('.')[0]}.mp3"
         convert_audio_to_mp3(uploaded_file, output_file)
         
-        st.success(f"File converted successfully: [Download MP3 file]({output_file})")
+        # Display success message with download link
+        st.success(f"File converted successfully! [Download MP3 file]({output_file})")
     
 if __name__ == "__main__":
     main()
