@@ -44,13 +44,5 @@ def main():
 
     st.write("App finished.")
 
-        
-        # Convert and save to MP3
-        output_file = f"converted_{uploaded_file.name.split('.')[0]}.mp3"
-        convert_audio_to_mp3(uploaded_file, output_file)
-        
-        # Display success message with download link
-        st.success(f"File converted successfully! [Download MP3 file]({output_file})")
-    
 if __name__ == "__main__":
     main()
