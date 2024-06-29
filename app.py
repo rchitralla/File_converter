@@ -1,5 +1,5 @@
 import streamlit as st
-import websocket_client
+import websocket
 import base64
 
 def main():
