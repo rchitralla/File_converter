@@ -1,5 +1,5 @@
 import streamlit as st
-import websocket
+import websocket_client
 import base64
 
 def main():
@@ -13,7 +13,8 @@ def main():
 
         if st.button("Convert to MP3"):
             websocket_url = "ws://localhost:8888/convert"
-            ws = websocket.create_connection(websocket_url)
+            ws = websocket_client.WebSocket()
+            ws.connect(websocket_url)
 
             with uploaded_file as f:
                 file_content = f.read()
